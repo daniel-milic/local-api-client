@@ -23,8 +23,7 @@ Frontend ↔ FastAPI proxy (no CORS issues)
     *   Filter by URL / body / response content
     *   Show recent / show all toggle
     *   Delete single items (🗑 button)
-    *   Export history as JSON file
-    *   Import JSON files to add to history
+    *   Import / Export history as JSON file — great for backup or sharing API requests
 *   Keyboard shortcut: **Ctrl + Enter** (or Cmd + Enter on Mac) to send request
 *   Enter key in URL / headers / body fields also sends (no Ctrl needed)
 
