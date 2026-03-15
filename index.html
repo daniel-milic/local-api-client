@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Local API Client</title>
+  <meta name="description" content="Simple local browser-based API client. Runs 100% locally with FastAPI proxy — no CORS issues, persistent request history, custom headers, and pretty-printed JSON responses.">
+  <meta name="keywords" content="local api client, api tester, rest client, browser http client, local api tool, developer tools, fastapi proxy">
+  <meta name="author" content="Daniel Milic">
+
+  <!-- Favicons -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="16x16"  href="/static/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32"  href="/static/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
+  <!-- Optional: tells mobile browsers the preferred theme color -->
+  <meta name="theme-color" content="#24c1e2">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --text: #212529;
+      --text-dim: #6c757d;
+      --border: #e5e7eb;
+      --accent: #24c1e2;
+      --accent-hover: #1c9ab4;
+      --success: #006e30;
+      --error: #ed008c;
+      --method-get: #24c1e2;
+      --method-post: #004ba5;
+      --method-put: #f78828;
+      --method-patch: #94bf1f;
+      --method-delete: #ed008c;
+      --pink: #ed008c;
+      --pink-hover: #bd0070;
+      --light-blue: #24c1e2;
+      --light-blue-hover: #1c9ab4;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    header { margin-bottom: 24px; text-align: center; }
+    h1 { font-size: 2.1rem; font-weight: 600; color: var(--accent); }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      background: var(--card);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      transition: box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .controls:hover {
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      border-color: var(--light-blue);
+    }
+
+    label { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-dim); }
+
+    select, input[type="text"] {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 15px;
+    }
+
+    select#method { min-width: 110px; font-weight: 600; }
+    #url { flex: 1; min-width: 300px; }
+
+    button#send {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.13s;
+    }
+    button#send:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      transition: box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .section:hover {
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      border-color: var(--light-blue);
+    }
+
+    .section-header {
+      background: var(--bg);
+      padding: 10px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+    }
+
+    .section-header h3 {
+      margin: 0;
+      flex: 0 0 auto;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .section-header .filter-wrapper {
+      flex: 1 1 300px;
+      min-width: 220px;
+      max-width: 480px;
+    }
+
+    #history-filter {
+      width: 100%;
+      padding: 7px 12px;
+      font-size: 0.92rem;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+    }
+
+    #history-filter::placeholder { color: var(--text-dim); opacity: 0.7; }
+
+    .section-header .buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button.small-btn {
+      padding: 4px 12px;
+      font-size: 0.85rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    button.small-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      background: var(--card);
+      color: var(--text);
+      border: none;
+      padding: 16px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 14px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    #response-body {
+      min-height: 300px;
+      background: #ffffff;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .status {
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .status.ok     { background: rgba(0,110,48,0.1); color: var(--success); }
+    .status.error  { background: rgba(237,0,140,0.1); color: var(--error); }
+    .status.neutral{ background: #f3f4f6; }
+
+    #method option[value="GET"]    { color: var(--method-get);    }
+    #method option[value="POST"]   { color: var(--method-post);   }
+    #method option[value="PUT"]    { color: var(--method-put);    }
+    #method option[value="PATCH"]  { color: var(--method-patch);  }
+    #method option[value="DELETE"] { color: var(--method-delete); }
+
+    #history-list {
+      background: #ffffff;
+      transition: max-height 0.2s ease;
+    }
+
+    #history-list.constrained {
+      max-height: calc(3 * 56px);
+      overflow-y: auto;
+    }
+
+    #history-list.expanded {
+      max-height: none;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    .history-item:last-child { border-bottom: none; }
+    .history-item:hover { background: #f3f4f6; }
+
+    .history-item .delete-btn {
+      color: var(--text-dim);
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      margin-left: auto;
+      opacity: 0.6;
+      transition: all 0.13s;
+    }
+    .history-item .delete-btn:hover {
+      color: var(--error);
+      opacity: 1;
+      transform: scale(1.15);
+    }
+
+    .method {
+      min-width: 62px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .method.get    { background: rgba(36,193,226,0.18); color: var(--method-get); }
+    .method.post   { background: rgba(0,75,165,0.18); color: var(--method-post); }
+    .method.put    { background: rgba(247,136,40,0.18); color: var(--method-put); }
+    .method.patch  { background: rgba(148,191,31,0.18); color: var(--method-patch); }
+    .method.delete { background: rgba(237,0,140,0.18); color: var(--method-delete); }
+
+    .url {
+      flex: 1;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 14px;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .history-item small {
+      color: var(--text-dim);
+      font-size: 12.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .info {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-top: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>Local API Client</h1>
+  </header>
+
+  <div class="controls">
+    <label>
+      Method
+      <select id="method">
+        <option value="GET" selected>GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="PATCH">PATCH</option>
+        <option value="DELETE">DELETE</option>
+      </select>
+    </label>
+
+    <label style="flex:1">
+      URL
+      <input type="text" id="url" placeholder="https://api.example.com/users/42">
+    </label>
+
+    <button id="send">Send</button>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <h3>History</h3>
+
+      <div class="filter-wrapper">
+        <input type="text" id="history-filter" placeholder="Filter by URL, body or response…">
+      </div>
+
+      <div class="buttons">
+        <button id="toggle-history" class="small-btn">Show all</button>
+        <button id="export-history" class="small-btn">Export</button>
+        <button id="import-history" class="small-btn">Import</button>
+        <button id="clear-history" class="small-btn">Clear all</button>
+      </div>
+    </div>
+
+    <div id="history-list" class="constrained"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Headers (one per line: Key: Value)</div>
+    <textarea id="headers" placeholder="Content-Type: application/json\nAuthorization: Bearer eyJhb...\nAccept: application/json"></textarea>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Request Body</div>
+    <textarea id="body" placeholder='{"name": "Alex", "active": true, "tags": ["dev", "api"]}'></textarea>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Response</div>
+    <div class="status neutral" id="status">— waiting for request —</div>
+    <textarea id="response-body" readonly></textarea>
+  </div>
+
+  <div class="info">
+    Simple local API client • History saved in browser • Powered by FastAPI proxy
+  </div>
+
+</div>
+
+<input type="file" id="import-file" accept=".json" style="display:none;">
+
+<script>
+// ────────────────────────────────────────────────
+// Your full JavaScript code (unchanged)
+// ────────────────────────────────────────────────
+
+const methodSelect    = document.getElementById('method');
+const urlInput        = document.getElementById('url');
+const headersArea     = document.getElementById('headers');
+const bodyArea        = document.getElementById('body');
+const sendBtn         = document.getElementById('send');
+const statusEl        = document.getElementById('status');
+const respBody        = document.getElementById('response-body');
+const historyList     = document.getElementById('history-list');
+const clearHistoryBtn = document.getElementById('clear-history');
+const exportBtn       = document.getElementById('export-history');
+const importBtn       = document.getElementById('import-history');
+const importInput     = document.getElementById('import-file');
+const toggleBtn       = document.getElementById('toggle-history');
+const filterInput     = document.getElementById('history-filter');
+
+let history = [];
+let showAll = false;
+let filterText = '';
+
+// History helpers
+function formatDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleString([], { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function saveHistory() {
+  try { localStorage.setItem('restClientHistory', JSON.stringify(history)); } catch {}
+}
+
+function loadHistory() {
+  try {
+    const saved = localStorage.getItem('restClientHistory');
+    if (saved) history = JSON.parse(saved);
+    renderHistory();
+  } catch {
+    history = [];
+    renderHistory();
+  }
+}
+
+function matchesFilter(item) {
+  if (!filterText) return true;
+  const q = filterText.toLowerCase();
+  return (
+    (item.url     || '').toLowerCase().includes(q) ||
+    (item.body    || '').toLowerCase().includes(q) ||
+    (item.response || '').toLowerCase().includes(q)
+  );
+}
+
+function renderHistory() {
+  historyList.innerHTML = '';
+  const visible = history.filter(matchesFilter);
+
+  if (visible.length === 0) {
+    const msg = document.createElement('div');
+    msg.style.padding = '40px 20px';
+    msg.style.color = 'var(--text-dim)';
+    msg.style.textAlign = 'center';
+    msg.style.fontStyle = 'italic';
+    msg.textContent = filterText ? 'No matching requests found.' : 'No successful requests saved yet.';
+    historyList.appendChild(msg);
+    return;
+  }
+
+  visible.forEach((item) => {
+    const idx = history.indexOf(item);
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.addEventListener('click', e => {
+      if (e.target.classList.contains('delete-btn')) return;
+      loadRequest(idx);
+    });
+
+    const m = document.createElement('span');
+    m.className = `method ${item.method.toLowerCase()}`;
+    m.textContent = item.method;
+
+    const u = document.createElement('span');
+    u.className = 'url';
+    u.title = item.url;
+    u.textContent = item.url.length > 60 ? item.url.substring(0,57)+'…' : item.url;
+
+    const t = document.createElement('small');
+    t.textContent = formatDate(item.timestamp);
+
+    const del = document.createElement('button');
+    del.className = 'delete-btn';
+    del.textContent = '🗑️';
+    del.title = 'Remove from history';
+    del.addEventListener('click', () => deleteHistoryItem(idx));
+
+    div.append(m, u, t, del);
+    historyList.appendChild(div);
+  });
+}
+
+function loadRequest(idx) {
+  const item = history[idx];
+  if (!item) return;
+  methodSelect.value = item.method;
+  urlInput.value     = item.url;
+  headersArea.value  = item.headers || '';
+  bodyArea.value     = item.body    || '';
+  respBody.value     = item.response || '';
+  statusEl.textContent = item.statusText || '— loaded from history —';
+  statusEl.className = item.statusClass || 'status neutral';
+}
+
+function deleteHistoryItem(idx) {
+  history.splice(idx, 1);
+  saveHistory();
+  renderHistory();
+}
+
+function addToHistory(method, url, headersStr, bodyStr, responseText, statusText, statusClass) {
+  if (!url) return;
+  history.unshift({
+    timestamp: Date.now(),
+    method,
+    url,
+    headers: headersStr || '',
+    body: bodyStr || '',
+    response: responseText || '',
+    statusText,
+    statusClass
+  });
+  saveHistory();
+  renderHistory();
+}
+
+// Filter & toggle
+filterInput.addEventListener('input', e => {
+  filterText = e.target.value.trim();
+  renderHistory();
+});
+
+toggleBtn.addEventListener('click', () => {
+  showAll = !showAll;
+  historyList.classList.toggle('constrained', !showAll);
+  historyList.classList.toggle('expanded', showAll);
+  toggleBtn.textContent = showAll ? 'Show recent' : 'Show all';
+});
+
+// Export / Import / Clear
+exportBtn.addEventListener('click', () => {
+  if (history.length === 0) return alert("Nothing to export.");
+  const data = JSON.stringify(history, null, 2);
+  const blob = new Blob([data], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `local-api-client-history-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+importBtn.addEventListener('click', () => importInput.click());
+
+importInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!Array.isArray(imported)) throw new Error("Not an array");
+      const valid = imported.filter(i =>
+        i && typeof i.method === 'string' &&
+        typeof i.url === 'string' &&
+        typeof i.timestamp === 'number'
+      );
+      if (valid.length === 0) return alert("No valid requests found.");
+      if (confirm(`Add ${valid.length} imported item${valid.length === 1 ? '' : 's'}?`)) {
+        history = [...valid, ...history];
+        saveHistory();
+        renderHistory();
+      }
+    } catch (err) {
+      alert("Error reading file: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+clearHistoryBtn.addEventListener('click', () => {
+  if (history.length === 0) return;
+  if (confirm('Clear ALL history?')) {
+    history = [];
+    try { localStorage.removeItem('restClientHistory'); } catch {}
+    renderHistory();
+  }
+});
+
+// Clear body on GET/DELETE
+methodSelect.addEventListener('change', () => {
+  if (['GET','DELETE'].includes(methodSelect.value)) {
+    bodyArea.value = '';
+  }
+});
+
+// Send via FastAPI proxy
+sendBtn.addEventListener('click', async () => {
+  const method = methodSelect.value;
+  const targetUrl = urlInput.value.trim();
+  if (!targetUrl) return alert("Please enter a URL");
+
+  const headersStr = headersArea.value.trim();
+  const bodyStr = bodyArea.value.trim();
+
+  respBody.value = "";
+  statusEl.textContent = "Sending...";
+  statusEl.className = "status neutral";
+
+  let headers = {};
+  headersStr.split('\n').forEach(line => {
+    const t = line.trim();
+    if (!t) return;
+    const [key, ...valueParts] = t.split(':');
+    if (key?.trim()) {
+      headers[key.trim()] = valueParts.join(':').trim();
+    }
+  });
+
+  let bodyPayload = undefined;
+  if (!['GET','DELETE'].includes(method) && bodyStr) {
+    bodyPayload = bodyStr;
+  }
+
+  try {
+    const proxyResponse = await fetch('/proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        method: method,
+        url: targetUrl,
+        headers: Object.keys(headers).length > 0 ? headers : undefined,
+        body: bodyPayload
+      })
+    });
+
+    if (!proxyResponse.ok) {
+      const errText = await proxyResponse.text();
+      throw new Error(`Proxy failed: ${proxyResponse.status} - ${errText}`);
+    }
+
+    const data = await proxyResponse.json();
+
+    let displayBody = data.body || '';
+    try {
+      const parsed = JSON.parse(data.body);
+      displayBody = JSON.stringify(parsed, null, 2);
+    } catch {}
+
+    respBody.value = displayBody;
+
+    const statusLine = `${data.status} ${data.status_text || ''}`.trim();
+    statusEl.textContent = statusLine || `Status ${data.status}`;
+    statusEl.className = `status ${data.ok ? 'ok' : 'error'}`;
+
+    if (data.ok) {
+      addToHistory(
+        method,
+        targetUrl,
+        headersStr,
+        bodyStr,
+        displayBody,
+        statusLine,
+        `status ${data.ok ? 'ok' : 'error'}`
+      );
+    }
+
+  } catch (err) {
+    console.error("Request failed:", err);
+    let userMessage = "Request failed";
+
+    if (err.message?.includes("Failed to fetch")) {
+      userMessage = "Cannot reach the backend\n\n→ Is uvicorn running?\n→ Check terminal for errors";
+    } else if (err.name === "AbortError") {
+      userMessage = "Request timed out (30 seconds)";
+    } else if (err.message) {
+      userMessage = err.message.trim();
+    }
+
+    statusEl.textContent = userMessage;
+    statusEl.className = "status error";
+    respBody.value = "";
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') sendBtn.click();
+});
+
+// Init
+loadHistory();
+</script>
+</body>
+</html>

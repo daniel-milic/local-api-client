@@ -1,0 +1,38 @@
+# Python virtual environments (modern & classic)
+.venv/
+venv/
+env/
+ENV/
+*.env
+.env*
+env.bak/
+venv.bak/
+
+# Bytecode & caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# macOS / Windows / Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Misc
+*.log
+.python-version
+pip-log.txt
