@@ -19,6 +19,7 @@ Frontend ↔ FastAPI proxy (no CORS issues)
 *   Pretty-printed JSON response + status code / text
 *   **History**:
     *   Automatically saves successful requests
+    *   Save to History toggle: Enable or disable adding new requests (default: ON, persists via localStorage)
     *   Click item → reloads method, URL, headers, body and last response
     *   Filter by URL / body / response content
     *   Show recent / show all toggle
