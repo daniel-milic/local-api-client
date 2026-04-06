@@ -174,6 +174,53 @@
       border-color: var(--accent);
     }
 
+    /* New CSS for toggle switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px; /* Slightly wider for better touch targets */
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border); /* Neutral color when off */
+      transition: .4s;
+      border-radius: 24px; /* Rounded for slider look */
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%; /* Circular knob */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent); /* Accent color when on */
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px); /* Move knob to the right */
+    }
+
     textarea {
       width: 100%;
       min-height: 140px;
@@ -333,6 +380,13 @@
       </div>
 
       <div class="buttons">
+        <label for="saveHistoryToggle" style="display: flex; align-items: center; gap: 8px; color: var(--text-dim);">
+          Save to History
+          <div class="switch">
+            <input type="checkbox" id="saveHistoryToggle" checked>
+            <span class="slider"></span>
+          </div>
+        </label>
         <button id="toggle-history" class="small-btn">Show all</button>
         <button id="export-history" class="small-btn">Export</button>
         <button id="import-history" class="small-btn">Import</button>
@@ -371,7 +425,7 @@ Accept: application/json"></textarea>
 
 <script>
 // ────────────────────────────────────────────────
-// Your full JavaScript code (unchanged)
+// Your full JavaScript code (updated)
 // ────────────────────────────────────────────────
 
 const methodSelect    = document.getElementById('method');
@@ -388,10 +442,25 @@ const importBtn       = document.getElementById('import-history');
 const importInput     = document.getElementById('import-file');
 const toggleBtn       = document.getElementById('toggle-history');
 const filterInput     = document.getElementById('history-filter');
+const saveHistoryToggle = document.getElementById('saveHistoryToggle');
 
 let history = [];
 let showAll = false;
 let filterText = '';
+let saveToHistory = true;  // Default to true
+
+// Load saveToHistory from localStorage on init
+function loadSettings() {
+  try {
+    const savedSetting = localStorage.getItem('saveToHistory');
+    if (savedSetting !== null) {
+      saveToHistory = savedSetting === 'true';
+      saveHistoryToggle.checked = saveToHistory;
+    }
+  } catch (e) {
+    console.error('Error loading settings:', e);
+  }
+}
 
 // History helpers
 function formatDate(ts) {
@@ -490,19 +559,20 @@ function deleteHistoryItem(idx) {
 }
 
 function addToHistory(method, url, headersStr, bodyStr, responseText, statusText, statusClass) {
-  if (!url) return;
-  history.unshift({
-    timestamp: Date.now(),
-    method,
-    url,
-    headers: headersStr || '',
-    body: bodyStr || '',
-    response: responseText || '',
-    statusText,
-    statusClass
-  });
-  saveHistory();
-  renderHistory();
+  if (saveToHistory && url) {  // Only add if saveToHistory is true
+    history.unshift({
+      timestamp: Date.now(),
+      method,
+      url,
+      headers: headersStr || '',
+      body: bodyStr || '',
+      response: responseText || '',
+      statusText,
+      statusClass
+    });
+    saveHistory();
+    renderHistory();
+  }
 }
 
 // Filter & toggle
@@ -516,6 +586,16 @@ toggleBtn.addEventListener('click', () => {
   historyList.classList.toggle('constrained', !showAll);
   historyList.classList.toggle('expanded', showAll);
   toggleBtn.textContent = showAll ? 'Show recent' : 'Show all';
+});
+
+// Event listener for saveHistoryToggle
+saveHistoryToggle.addEventListener('change', (e) => {
+  saveToHistory = e.target.checked;
+  try {
+    localStorage.setItem('saveToHistory', saveToHistory);
+  } catch (err) {
+    console.error('Error saving settings:', err);
+  }
 });
 
 // Export / Import / Clear
@@ -670,6 +750,7 @@ document.addEventListener('keydown', e => {
 });
 
 // Init
+loadSettings();  // Load settings first
 loadHistory();
 </script>
 </body>
