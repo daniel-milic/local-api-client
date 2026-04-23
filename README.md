@@ -8,104 +8,103 @@ Frontend ↔ FastAPI proxy (no CORS issues)
 *   Everything stays on your machine — no cloud service, no tracking
 *   Bypasses browser CORS restrictions via a tiny FastAPI proxy
 *   Persistent request history saved in the browser (localStorage)
+*   **New**: Built-in Test Runner with visual pass/fail indicators
 *   Very lightweight — single HTML file + minimal Python backend
-*   Good alternative when you want something faster/lighter than Postman/Insomnia for quick tests
+*   Great lightweight alternative to Postman/Insomnia for quick local testing
 
 ## Features
 
 *   GET / POST / PUT / PATCH / DELETE
 *   Custom headers (one per line: `Key: Value`)
 *   Request body (JSON or text — textarea)
-*   Pretty-printed JSON response + status code / text
+*   Pretty-printed JSON responses + status code / text
 *   **History**:
     *   Automatically saves successful requests
-    *   Save to History toggle: Enable or disable adding new requests (default: ON, persists via localStorage)
-    *   Click item → reloads method, URL, headers, body and last response
+    *   Save to History toggle (persists in localStorage)
+    *   Click any item to reload method, URL, headers, body and response
     *   Filter by URL / body / response content
-    *   Show recent / show all toggle
-    *   Delete single items (🗑 button)
-    *   Import / Export history as JSON file — great for backup or sharing API requests
+    *   Show recent / Show all toggle
+    *   Delete single items
+    *   Import / Export history as JSON (great for backup or sharing)
+*   **Test Runner** (New!):
+    *   Dedicated **Test Results** sidebar panel
+    *   **Run Tests** button
+    *   Executes **only the currently visible requests** in the History panel
+    *   Fully respects the active filter — filter first to test a specific subset
+    *   Modern status indicators (green ✓ = pass, red ✕ = fail) next to every history item
+    *   Automatically updates response, status, and **timestamp** on every run
+    *   Live progress + final pass/fail summary with counts
 *   Keyboard shortcut: **Ctrl + Enter** (or Cmd + Enter on Mac) to send request
-*   Enter key in URL / headers / body fields also sends (no Ctrl needed)
 
 ## Screenshots
 
-(Place images in a `screenshots/` folder in the repository)
+### Main interface with Test Runner
 
-### Main interface
-
-![Main interface](screenshots/main.png)
-
+![Local API Client with Test Results](screenshots/main.png)
 
 ## Setup (recommended: virtual environment)
 
-1.  Clone or download the repository
+1. Clone or download the repository
 
-    git clone https://github.com/your-username/local-api-client.git
-    cd local-api-client
+   ```bash
+   git clone https://github.com/daniel-milic/local-api-client.git
+   cd local-api-client
+   ```
 
-1.  Create and activate virtual environment
+2. Create and activate virtual environment
 
-**Windows (Command Prompt / PowerShell):**
+   **Windows:**
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
 
-    python -m venv .venv
-    .venv\Scripts\activate
+   **macOS / Linux:**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
 
-**macOS / Linux / Git Bash:**
+3. Install dependencies
 
-    python3 -m venv .venv
-    source .venv/bin/activate
+   ```bash
+   pip install fastapi uvicorn httpx pydantic
+   ```
 
-1.  Install dependencies
+4. **Important** — edit `whitelist.json` before starting
 
-    pip install fastapi uvicorn httpx pydantic
+   Only domains listed here are allowed through the proxy.
 
-(or if you have `requirements.txt`):
+5. Start the server
 
-    pip install -r requirements.txt
+   ```bash
+   uvicorn main:app --reload --port 8000
+   ```
 
-1.  **Important** — edit `whitelist.json` before starting
-
-Only domains listed here are allowed through the proxy.
-
-Example:
-
-    [
-      "api.github.com",
-      "httpbin.org",
-      "localhost",
-      "127.0.0.1",
-      "jsonplaceholder.typicode.com",
-      "your-api.company.com"
-    ]
-
-*   Wildcards like `*.example.com` are supported
-*   Changes require server restart
-
-1.  Start the server
-
-    uvicorn main:app --reload --port 8000
-
-1.  Open in browser
-
-    http://localhost:8000/
+6. Open in browser: `http://localhost:8000/`
 
 ## Security & Usage Notes
 
-**This tool is for local / personal development use only.**
+**For local / personal development use only.**
 
-*   The proxy is intentionally restricted via `whitelist.json`
-*   Basic in-memory rate limiting exists (6 req / 60 s per IP) — not suitable for public exposure
-*   **Do not** expose this server publicly — even temporarily
-*   No authentication / advanced abuse protection
-*   For real/sensitive API keys use dedicated tools with better security (Postman, Insomnia, Bruno, curl, etc.)
+*   Proxy is restricted via `whitelist.json`
+*   Basic rate limiting included
+*   Do not expose publicly
 
 ## Tech stack
 
-*   Frontend: single-file HTML + CSS + vanilla JavaScript
-*   Backend: FastAPI + httpx (async HTTP client)
-*   History persistence: browser localStorage
+*   Frontend: single-file HTML + CSS + vanilla JavaScript (with Test Runner)
+*   Backend: FastAPI + httpx
+*   History & test status: browser localStorage
 
-Enjoy testing APIs locally!
+---
+
+Enjoy testing and **validating** your APIs locally!
 
 Vibe-coded together with Grok • xAI
+```
+
+**✅ Done!**  
+I’ve updated the README.md with a clear, prominent section for the new **Test Runner** feature, including how filtering works, status indicators, timestamp updates, and the sidebar.
+
+Would you like me to also update the screenshot caption or add anything else (e.g. a dedicated “How to use Test Runner” subsection)? Just say the word and I’ll refine it further!

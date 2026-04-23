@@ -61,8 +61,8 @@
     .container { 
       max-width: 1200px; 
       margin: 0 auto; 
-      display: flex;  /* Updated to flex for sidebar layout */
-      gap: 16px;  /* Add some space between panels */
+      display: flex;  
+      gap: 16px;  
     }
 
     .controls {
@@ -124,6 +124,11 @@
       background: var(--success-hover);
       transform: translateY(-1px);
     }
+    button#run-tests:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
 
     .section {
       background: var(--card);
@@ -135,12 +140,12 @@
       transition: box-shadow 0.3s, border-color 0.3s;
     }
 
-    .test-results {  /* New class for Test Results panel */
-      width: 30%;  /* Set to 30% width as requested */
+    .test-results {
+      width: 30%;
     }
 
-    .main-content {  /* New class for the rest of the content */
-      width: 70%;  /* Remaining 70% width */
+    .main-content {
+      width: 70%;
     }
 
     .section:hover {
@@ -208,11 +213,10 @@
       border-color: var(--accent);
     }
 
-    /* New CSS for toggle switch */
     .switch {
       position: relative;
       display: inline-block;
-      width: 48px; /* Slightly wider for better touch targets */
+      width: 48px;
       height: 24px;
     }
 
@@ -229,9 +233,9 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: var(--border); /* Neutral color when off */
+      background-color: var(--border);
       transition: .4s;
-      border-radius: 24px; /* Rounded for slider look */
+      border-radius: 24px;
     }
 
     .slider:before {
@@ -243,16 +247,16 @@
       bottom: 3px;
       background-color: white;
       transition: .4s;
-      border-radius: 50%; /* Circular knob */
+      border-radius: 50%;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     input:checked + .slider {
-      background-color: var(--accent); /* Accent color when on */
+      background-color: var(--accent);
     }
 
     input:checked + .slider:before {
-      transform: translateX(24px); /* Move knob to the right */
+      transform: translateX(24px);
     }
 
     textarea {
@@ -369,6 +373,37 @@
       flex-shrink: 0;
     }
 
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .history-item:hover .status-indicator {
+      transform: scale(1.1);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .status-indicator.pass {
+      background: var(--success);
+      color: #fff;
+    }
+    .status-indicator.fail {
+      background: var(--error);
+      color: #fff;
+    }
+    .status-indicator.untested {
+      background: #6c757d;
+      color: #fff;
+      font-size: 13px;
+    }
+
     .info {
       color: var(--text-dim);
       font-size: 0.9rem;
@@ -385,17 +420,20 @@
 
 <div class="container">
 
-  <div class="section test-results">  <!-- Test Results panel with new class -->
+  <div class="section test-results">
     <div class="section-header">
       <h3>Test Results</h3>
-      <button id="run-tests">Run Tests</button>  <!-- Moved to header -->
+      <button id="run-tests">Run Tests</button>
     </div>
     <div id="test-results-content">
-      <!-- Additional content can be added here later -->
+      <div style="padding:40px 20px; text-align:center; color:var(--text-dim); font-style:italic;">
+        Click <strong>Run Tests</strong> to validate currently visible requests.<br>
+        Status indicators + timestamps will update automatically.
+      </div>
     </div>
   </div>
 
-  <div class="main-content">  <!-- Wrapper for the rest of the content -->
+  <div class="main-content">
 
     <div class="controls">
       <label>
@@ -460,10 +498,6 @@ Accept: application/json"></textarea>
       <div class="status neutral" id="status">— waiting for request —</div>
       <textarea id="response-body" readonly></textarea>
     </div>
-
-    <div class="info">
-      Simple local API client • History saved in browser • Powered by FastAPI proxy
-    </div>
   </div>
 
 </div>
@@ -472,7 +506,7 @@ Accept: application/json"></textarea>
 
 <script>
 // ────────────────────────────────────────────────
-// Your full JavaScript code (updated)
+// Final version: timestamp updated on test run + response truncation
 // ────────────────────────────────────────────────
 
 const methodSelect    = document.getElementById('method');
@@ -490,13 +524,33 @@ const importInput     = document.getElementById('import-file');
 const toggleBtn       = document.getElementById('toggle-history');
 const filterInput     = document.getElementById('history-filter');
 const saveHistoryToggle = document.getElementById('saveHistoryToggle');
+const runTestsBtn     = document.getElementById('run-tests');
+const testResultsContent = document.getElementById('test-results-content');
 
 let history = [];
 let showAll = false;
 let filterText = '';
-let saveToHistory = true;  // Default to true
+let saveToHistory = true;
 
-// Load saveToHistory from localStorage on init
+// ────── Helpers ──────
+function prettyPrintJson(text) {
+  if (!text) return '';
+  try {
+    const parsed = JSON.parse(text);
+    return JSON.stringify(parsed, null, 2);
+  } catch (e) {
+    return text;
+  }
+}
+
+function truncateForStorage(text) {
+  if (!text) return '';
+  const MAX_CHARS = 15000; // ~15 KB per response → keeps export files small
+  if (text.length <= MAX_CHARS) return text;
+  return text.substring(0, MAX_CHARS) + '\n\n... [response truncated for storage — re-run test for full result]';
+}
+
+// Load settings
 function loadSettings() {
   try {
     const savedSetting = localStorage.getItem('saveToHistory');
@@ -540,6 +594,46 @@ function matchesFilter(item) {
   );
 }
 
+// Reusable proxy execution
+async function executeRequest(method, targetUrl, headersStr = '', bodyStr = '') {
+  const headers = {};
+  if (headersStr) {
+    headersStr.split('\n').forEach(line => {
+      const t = line.trim();
+      if (!t) return;
+      const colonIndex = t.indexOf(':');
+      if (colonIndex > 0) {
+        const key = t.substring(0, colonIndex).trim();
+        const value = t.substring(colonIndex + 1).trim();
+        if (key) headers[key] = value;
+      }
+    });
+  }
+
+  let bodyPayload = undefined;
+  if (!['GET','DELETE'].includes(method) && bodyStr) {
+    bodyPayload = bodyStr;
+  }
+
+  const proxyResponse = await fetch('/proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      method: method,
+      url: targetUrl,
+      headers: Object.keys(headers).length > 0 ? headers : undefined,
+      body: bodyPayload
+    })
+  });
+
+  if (!proxyResponse.ok) {
+    const errText = await proxyResponse.text();
+    throw new Error(`Proxy failed: ${proxyResponse.status} - ${errText}`);
+  }
+
+  return await proxyResponse.json();
+}
+
 function renderHistory() {
   historyList.innerHTML = '';
   const visible = history.filter(matchesFilter);
@@ -564,6 +658,12 @@ function renderHistory() {
       loadRequest(idx);
     });
 
+    const statusVal = item.testStatus || 'untested';
+    const indicator = document.createElement('span');
+    indicator.className = `status-indicator ${statusVal}`;
+    indicator.textContent = statusVal === 'pass' ? '✓' : (statusVal === 'fail' ? '✕' : '–');
+    indicator.title = statusVal === 'pass' ? 'Test passed' : (statusVal === 'fail' ? 'Test failed' : 'Not yet tested');
+
     const m = document.createElement('span');
     m.className = `method ${item.method.toLowerCase()}`;
     m.textContent = item.method;
@@ -582,7 +682,7 @@ function renderHistory() {
     del.title = 'Remove from history';
     del.addEventListener('click', () => deleteHistoryItem(idx));
 
-    div.append(m, u, t, del);
+    div.append(indicator, m, u, t, del);
     historyList.appendChild(div);
   });
 }
@@ -594,7 +694,7 @@ function loadRequest(idx) {
   urlInput.value     = item.url;
   headersArea.value  = item.headers || '';
   bodyArea.value     = item.body    || '';
-  respBody.value     = item.response || '';
+  respBody.value     = prettyPrintJson(item.response || '');
   statusEl.textContent = item.statusText || '— loaded from history —';
   statusEl.className = item.statusClass || 'status neutral';
 }
@@ -605,17 +705,18 @@ function deleteHistoryItem(idx) {
   renderHistory();
 }
 
-function addToHistory(method, url, headersStr, bodyStr, responseText, statusText, statusClass) {
-  if (saveToHistory && url) {  // Only add if saveToHistory is true
+function addToHistory(method, url, headersStr, bodyStr, rawResponse, statusText, statusClass) {
+  if (saveToHistory && url) {
     history.unshift({
       timestamp: Date.now(),
       method,
       url,
       headers: headersStr || '',
       body: bodyStr || '',
-      response: responseText || '',
+      response: truncateForStorage(rawResponse || ''),
       statusText,
-      statusClass
+      statusClass,
+      testStatus: 'pass'
     });
     saveHistory();
     renderHistory();
@@ -635,7 +736,6 @@ toggleBtn.addEventListener('click', () => {
   toggleBtn.textContent = showAll ? 'Show recent' : 'Show all';
 });
 
-// Event listener for saveHistoryToggle
 saveHistoryToggle.addEventListener('change', (e) => {
   saveToHistory = e.target.checked;
   try {
@@ -693,6 +793,10 @@ clearHistoryBtn.addEventListener('click', () => {
     history = [];
     try { localStorage.removeItem('restClientHistory'); } catch {}
     renderHistory();
+    testResultsContent.innerHTML = `
+      <div style="padding:40px 20px; text-align:center; color:var(--text-dim); font-style:italic;">
+        History cleared.<br>Click <strong>Run Tests</strong> after adding new calls.
+      </div>`;
   }
 });
 
@@ -703,7 +807,7 @@ methodSelect.addEventListener('change', () => {
   }
 });
 
-// Send via FastAPI proxy
+// Send request
 sendBtn.addEventListener('click', async () => {
   const method = methodSelect.value;
   const targetUrl = urlInput.value.trim();
@@ -716,45 +820,11 @@ sendBtn.addEventListener('click', async () => {
   statusEl.textContent = "Sending...";
   statusEl.className = "status neutral";
 
-  let headers = {};
-  headersStr.split('\n').forEach(line => {
-    const t = line.trim();
-    if (!t) return;
-    const [key, ...valueParts] = t.split(':');
-    if (key?.trim()) {
-      headers[key.trim()] = valueParts.join(':').trim();
-    }
-  });
-
-  let bodyPayload = undefined;
-  if (!['GET','DELETE'].includes(method) && bodyStr) {
-    bodyPayload = bodyStr;
-  }
-
   try {
-    const proxyResponse = await fetch('/proxy', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        method: method,
-        url: targetUrl,
-        headers: Object.keys(headers).length > 0 ? headers : undefined,
-        body: bodyPayload
-      })
-    });
+    const data = await executeRequest(method, targetUrl, headersStr, bodyStr);
 
-    if (!proxyResponse.ok) {
-      const errText = await proxyResponse.text();
-      throw new Error(`Proxy failed: ${proxyResponse.status} - ${errText}`);
-    }
-
-    const data = await proxyResponse.json();
-
-    let displayBody = data.body || '';
-    try {
-      const parsed = JSON.parse(data.body);
-      displayBody = JSON.stringify(parsed, null, 2);
-    } catch {}
+    const rawBody = data.body || '';
+    const displayBody = prettyPrintJson(rawBody);
 
     respBody.value = displayBody;
 
@@ -768,7 +838,7 @@ sendBtn.addEventListener('click', async () => {
         targetUrl,
         headersStr,
         bodyStr,
-        displayBody,
+        rawBody,                    // store raw (truncated) version
         statusLine,
         `status ${data.ok ? 'ok' : 'error'}`
       );
@@ -792,12 +862,116 @@ sendBtn.addEventListener('click', async () => {
   }
 });
 
+// Run Tests — only on currently visible (filtered) items
+runTestsBtn.addEventListener('click', async () => {
+  if (history.length === 0) {
+    alert("No requests in history to test.");
+    return;
+  }
+
+  const visibleItems = history.filter(matchesFilter);
+
+  if (visibleItems.length === 0) {
+    alert("No matching requests found to test.");
+    return;
+  }
+
+  const originalBtnText = runTestsBtn.textContent;
+  runTestsBtn.disabled = true;
+  runTestsBtn.textContent = 'Running Tests…';
+  testResultsContent.innerHTML = `
+    <div style="padding:24px; text-align:center; color:var(--text-dim);">
+      <strong>Executing ${visibleItems.length} test(s)...</strong><br>
+      <small style="opacity:0.7;">This may take a moment depending on API response times.</small>
+    </div>`;
+
+  let passed = 0;
+  let failed = 0;
+
+  for (let i = 0; i < visibleItems.length; i++) {
+    const item = visibleItems[i];
+
+    testResultsContent.innerHTML = `
+      <div style="padding:16px 20px; border-bottom:1px solid var(--border);">
+        <div style="display:flex; align-items:center; gap:12px; font-size:0.95rem;">
+          <span class="status-indicator ${item.testStatus || 'untested'}">${item.testStatus === 'pass' ? '✓' : (item.testStatus === 'fail' ? '✕' : '–')}</span>
+          <span style="font-weight:600;">${item.method}</span>
+          <span style="flex:1; font-family:'SF Mono',monospace; font-size:13px; overflow:hidden; text-overflow:ellipsis;">${item.url}</span>
+        </div>
+        <div style="margin-top:8px; font-size:13px; color:var(--text-dim);">Running…</div>
+      </div>`;
+
+    try {
+      const data = await executeRequest(item.method, item.url, item.headers, item.body);
+
+      const rawBody = data.body || '';
+      item.response = truncateForStorage(rawBody);
+      const statusLine = `${data.status} ${data.status_text || ''}`.trim();
+      item.statusText = statusLine;
+      item.statusClass = `status ${data.ok ? 'ok' : 'error'}`;
+      item.testStatus = data.ok ? 'pass' : 'fail';
+
+      if (data.ok) passed++;
+      else failed++;
+
+    } catch (err) {
+      console.error("Test failed:", item, err);
+      item.testStatus = 'fail';
+      item.response = truncateForStorage(err.message || 'Execution error');
+      item.statusText = 'Test Error';
+      item.statusClass = 'status error';
+      failed++;
+    }
+
+    // Update timestamp on every test run
+    item.timestamp = Date.now();
+
+    saveHistory();
+    renderHistory();
+  }
+
+  const summaryHTML = `
+    <div style="padding:24px;">
+      <h4 style="margin:0 0 16px 0; color:var(--text);">✅ Test Run Complete</h4>
+      
+      <div style="display:flex; gap:16px;">
+        <div style="flex:1; background:rgba(0,110,48,0.1); color:var(--success); padding:20px 16px; border-radius:10px; text-align:center;">
+          <div style="font-size:2.4rem; font-weight:700; line-height:1;">${passed}</div>
+          <div style="font-weight:600; margin-top:4px;">PASSED</div>
+        </div>
+        <div style="flex:1; background:rgba(237,0,140,0.1); color:var(--error); padding:20px 16px; border-radius:10px; text-align:center;">
+          <div style="font-size:2.4rem; font-weight:700; line-height:1;">${failed}</div>
+          <div style="font-weight:600; margin-top:4px;">FAILED</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; padding:12px; background:#f8f9fa; border-radius:8px; font-size:0.9rem; color:var(--text-dim);">
+        <strong>${visibleItems.length} test(s) executed</strong><br>
+        Completed ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+      </div>
+
+      <button id="reset-test-summary" class="small-btn" style="margin-top:20px; width:100%;">
+        Run Tests Again
+      </button>
+    </div>`;
+
+  testResultsContent.innerHTML = summaryHTML;
+
+  runTestsBtn.disabled = false;
+  runTestsBtn.textContent = originalBtnText;
+
+  const resetBtn = document.getElementById('reset-test-summary');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => runTestsBtn.click());
+  }
+});
+
 document.addEventListener('keydown', e => {
   if (e.ctrlKey && e.key === 'Enter') sendBtn.click();
 });
 
 // Init
-loadSettings();  // Load settings first
+loadSettings();
 loadHistory();
 </script>
 </body>
