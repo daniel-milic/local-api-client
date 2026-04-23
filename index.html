@@ -27,6 +27,7 @@
       --accent: #24c1e2;
       --accent-hover: #1c9ab4;
       --success: #006e30;
+      --success-hover: #005a26;
       --error: #ed008c;
       --method-get: #24c1e2;
       --method-post: #004ba5;
@@ -49,15 +50,20 @@
       line-height: 1.5;
     }
 
+    header {
+      margin-bottom: 24px;
+      text-align: center;
+      width: 100%;
+    }
+
+    h1 { font-size: 2.1rem; font-weight: 600; color: var(--accent); }
+
     .container { 
       max-width: 1200px; 
       margin: 0 auto; 
       display: flex;  /* Updated to flex for sidebar layout */
       gap: 16px;  /* Add some space between panels */
     }
-
-    header { margin-bottom: 24px; text-align: center; }
-    h1 { font-size: 2.1rem; font-weight: 600; color: var(--accent); }
 
     .controls {
       display: flex;
@@ -103,6 +109,21 @@
       transition: all 0.13s;
     }
     button#send:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+    button#run-tests {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.13s;
+    }
+    button#run-tests:hover {
+      background: var(--success-hover);
+      transform: translateY(-1px);
+    }
 
     .section {
       background: var(--card);
@@ -358,12 +379,16 @@
 </head>
 <body>
 
+<header>
+  <h1>Local API Client</h1>
+</header>
+
 <div class="container">
 
   <div class="section test-results">  <!-- Test Results panel with new class -->
     <div class="section-header">
       <h3>Test Results</h3>
-      <button id="run-tests" class="small-btn">Run Tests</button>  <!-- Moved to header -->
+      <button id="run-tests">Run Tests</button>  <!-- Moved to header -->
     </div>
     <div id="test-results-content">
       <!-- Additional content can be added here later -->
@@ -371,9 +396,6 @@
   </div>
 
   <div class="main-content">  <!-- Wrapper for the rest of the content -->
-    <header>
-      <h1>Local API Client</h1>
-    </header>
 
     <div class="controls">
       <label>
