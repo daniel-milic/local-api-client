@@ -1,3 +1,25 @@
+**✅ Done!**  
+
+I’ve updated your `README.md` and added two new **start scripts** for easy launching:
+
+- `start.bat` → Windows  
+- `start.sh` → Linux / macOS  
+
+### How to use (new recommended way)
+
+Just double-click `start.bat` (Windows) or run `./start.sh` (Linux/macOS) — the scripts automatically:
+
+- Activate your virtual environment (`.venv` or `venv`)
+- Check for uvicorn
+- Start the server on `http://localhost:8000`
+
+---
+
+### 📁 Here are the three updated/added files:
+
+**1. Updated `README.md`** (replace your current file with this)
+
+```markdown
 # Local API Client
 
 Simple browser-based API client that runs **100% locally**  
@@ -8,7 +30,7 @@ Frontend ↔ FastAPI proxy (no CORS issues)
 *   Everything stays on your machine — no cloud service, no tracking
 *   Bypasses browser CORS restrictions via a tiny FastAPI proxy
 *   Persistent request history saved in the browser (localStorage)
-*   **New**: Built-in Test Runner with visual pass/fail indicators
+*   **New**: Built-in Test Runner with donut chart + smart multi-word filtering + response timing
 *   Very lightweight — single HTML file + minimal Python backend
 *   Great lightweight alternative to Postman/Insomnia for quick local testing
 
@@ -20,29 +42,25 @@ Frontend ↔ FastAPI proxy (no CORS issues)
 *   Pretty-printed JSON responses + status code / text
 *   **History**:
     *   Automatically saves successful requests
+    *   **Response time** displayed in milliseconds (`XXX ms`) right before the timestamp
+    *   Smart **multi-word search** (space-separated terms) with **AND logic**
+    *   Special status keyword handling (`pass fail`, `pass pokeapi`, `GET api success`, etc.)
     *   Save to History toggle (persists in localStorage)
     *   Click any item to reload method, URL, headers, body and response
-    *   Filter by URL / body / response content
     *   Show recent / Show all toggle
     *   Delete single items
     *   Import / Export history as JSON (great for backup or sharing)
 *   **Test Runner** (New!):
     *   Dedicated **Test Results** sidebar panel
-    *   **Run Tests** button
-    *   Executes **only the currently visible requests** in the History panel
+    *   Beautiful **donut pie chart** (ECharts) showing pass/fail distribution with total count in the center
+    *   **Run Tests** button executes **only the currently visible** (filtered) requests
     *   Fully respects the active filter — filter first to test a specific subset
     *   Modern status indicators (green ✓ = pass, red ✕ = fail) next to every history item
-    *   Automatically updates response, status, and **timestamp** on every run
-    *   Live progress + final pass/fail summary with counts
+    *   Automatically updates response, status, timestamp **and response time** on every run
+    *   Live progress + final summary with pass/fail counts and donut visualization
 *   Keyboard shortcut: **Ctrl + Enter** (or Cmd + Enter on Mac) to send request
 
-## Screenshots
-
-### Main interface with Test Runner
-
-![Local API Client with Test Results](screenshots/main.png)
-
-## Setup (recommended: virtual environment)
+## Quick Start (Recommended)
 
 1. Clone or download the repository
 
@@ -51,7 +69,7 @@ Frontend ↔ FastAPI proxy (no CORS issues)
    cd local-api-client
    ```
 
-2. Create and activate virtual environment
+2. Create and activate virtual environment (once)
 
    **Windows:**
    ```bash
@@ -65,23 +83,33 @@ Frontend ↔ FastAPI proxy (no CORS issues)
    source .venv/bin/activate
    ```
 
-3. Install dependencies
+3. Install dependencies (once)
 
    ```bash
    pip install fastapi uvicorn httpx pydantic
    ```
 
-4. **Important** — edit `whitelist.json` before starting
+4. **Important** — edit `whitelist.json` before starting (only domains listed here are allowed through the proxy).
 
-   Only domains listed here are allowed through the proxy.
+5. **Start the server** using the convenient start script:
 
-5. Start the server
-
+   **Windows:** Double-click `start.bat`  
+   **Linux / macOS:**
    ```bash
-   uvicorn main:app --reload --port 8000
+   chmod +x start.sh
+   ./start.sh
    ```
 
+   The script will automatically activate the virtual environment and launch uvicorn on `http://localhost:8000`.
+
 6. Open in browser: `http://localhost:8000/`
+
+## Setup (Manual alternative)
+
+If you prefer the manual way, follow the old steps and run:
+```bash
+uvicorn main:app --reload --port 8000
+```
 
 ## Security & Usage Notes
 
@@ -93,7 +121,7 @@ Frontend ↔ FastAPI proxy (no CORS issues)
 
 ## Tech stack
 
-*   Frontend: single-file HTML + CSS + vanilla JavaScript (with Test Runner)
+*   Frontend: single-file HTML + CSS + vanilla JavaScript (with Test Runner, ECharts donut chart, and response timing)
 *   Backend: FastAPI + httpx
 *   History & test status: browser localStorage
 
@@ -102,9 +130,4 @@ Frontend ↔ FastAPI proxy (no CORS issues)
 Enjoy testing and **validating** your APIs locally!
 
 Vibe-coded together with Grok • xAI
-```
 
-**✅ Done!**  
-I’ve updated the README.md with a clear, prominent section for the new **Test Runner** feature, including how filtering works, status indicators, timestamp updates, and the sidebar.
-
-Would you like me to also update the screenshot caption or add anything else (e.g. a dedicated “How to use Test Runner” subsection)? Just say the word and I’ll refine it further!

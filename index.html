@@ -14,28 +14,25 @@
   <link rel="icon" type="image/png" sizes="32x32"  href="/static/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
 
-  <!-- Optional: tells mobile browsers the preferred theme color -->
   <meta name="theme-color" content="#24c1e2">
 
   <style>
     :root {
-      --bg: #ffffff;
-      --card: #ffffff;
-      --text: #212529;
-      --text-dim: #6c757d;
-      --border: #e5e7eb;
+      --bg: #0f172a;
+      --card: #1e2937;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --border: #334155;
       --accent: #24c1e2;
       --accent-hover: #1c9ab4;
-      --success: #006e30;
-      --success-hover: #005a26;
-      --error: #ed008c;
+      --success: #22c55e;
+      --success-hover: #16a34a;
+      --error: #f87171;
       --method-get: #24c1e2;
-      --method-post: #004ba5;
-      --method-put: #f78828;
-      --method-patch: #94bf1f;
-      --method-delete: #ed008c;
-      --pink: #ed008c;
-      --pink-hover: #bd0070;
+      --method-post: #60a5fa;
+      --method-put: #f59e0b;
+      --method-patch: #84cc16;
+      --method-delete: #f87171;
       --light-blue: #24c1e2;
       --light-blue-hover: #1c9ab4;
     }
@@ -59,7 +56,8 @@
     h1 { font-size: 2.1rem; font-weight: 600; color: var(--accent); }
 
     .container { 
-      max-width: 1200px; 
+      width: 90%;
+      max-width: 1600px;
       margin: 0 auto; 
       display: flex;  
       gap: 16px;  
@@ -74,12 +72,12 @@
       padding: 16px;
       border-radius: 10px;
       border: 1px solid var(--border);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
       transition: box-shadow 0.3s, border-color 0.3s;
     }
 
     .controls:hover {
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.2);
       border-color: var(--light-blue);
     }
 
@@ -136,20 +134,15 @@
       border-radius: 10px;
       margin-bottom: 24px;
       overflow: hidden;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
       transition: box-shadow 0.3s, border-color 0.3s;
     }
 
-    .test-results {
-      width: 30%;
-    }
-
-    .main-content {
-      width: 70%;
-    }
+    .test-results { width: 25%; }
+    .main-content { width: 75%; }
 
     .section:hover {
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.2);
       border-color: var(--light-blue);
     }
 
@@ -245,10 +238,10 @@
       width: 18px;
       left: 3px;
       bottom: 3px;
-      background-color: white;
+      background-color: #e2e8f0;
       transition: .4s;
       border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     input:checked + .slider {
@@ -264,19 +257,21 @@
       min-height: 140px;
       background: var(--card);
       color: var(--text);
-      border: none;
+      border: 1px solid var(--border);
       padding: 16px;
       font-family: 'SF Mono', 'Consolas', monospace;
       font-size: 14px;
       resize: vertical;
       line-height: 1.6;
+      white-space: pre;
+      tab-size: 2;
     }
 
     #response-body {
       min-height: 300px;
-      background: #ffffff;
-      white-space: pre-wrap;
-      word-break: break-all;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     .status {
@@ -284,9 +279,9 @@
       font-weight: 600;
       font-size: 1.05rem;
     }
-    .status.ok     { background: rgba(0,110,48,0.1); color: var(--success); }
-    .status.error  { background: rgba(237,0,140,0.1); color: var(--error); }
-    .status.neutral{ background: #f3f4f6; }
+    .status.ok     { background: rgba(34,197,94,0.15); color: var(--success); }
+    .status.error  { background: rgba(248,113,113,0.15); color: var(--error); }
+    .status.neutral{ background: #334155; color: var(--text-dim); }
 
     #method option[value="GET"]    { color: var(--method-get);    }
     #method option[value="POST"]   { color: var(--method-post);   }
@@ -295,7 +290,7 @@
     #method option[value="DELETE"] { color: var(--method-delete); }
 
     #history-list {
-      background: #ffffff;
+      background: var(--card);
       transition: max-height 0.2s ease;
     }
 
@@ -320,7 +315,7 @@
     }
 
     .history-item:last-child { border-bottom: none; }
-    .history-item:hover { background: #f3f4f6; }
+    .history-item:hover { background: #334155; }
 
     .history-item .delete-btn {
       color: var(--text-dim);
@@ -350,20 +345,35 @@
       flex-shrink: 0;
     }
 
-    .method.get    { background: rgba(36,193,226,0.18); color: var(--method-get); }
-    .method.post   { background: rgba(0,75,165,0.18); color: var(--method-post); }
-    .method.put    { background: rgba(247,136,40,0.18); color: var(--method-put); }
-    .method.patch  { background: rgba(148,191,31,0.18); color: var(--method-patch); }
-    .method.delete { background: rgba(237,0,140,0.18); color: var(--method-delete); }
+    .method.get    { background: rgba(36,193,226,0.25); color: var(--method-get); }
+    .method.post   { background: rgba(96,165,250,0.25); color: var(--method-post); }
+    .method.put    { background: rgba(245,158,11,0.25); color: var(--method-put); }
+    .method.patch  { background: rgba(132,204,22,0.25); color: var(--method-patch); }
+    .method.delete { background: rgba(248,113,113,0.25); color: var(--method-delete); }
 
     .url {
       flex: 1;
       font-family: 'SF Mono', 'Consolas', monospace;
       font-size: 14px;
       color: var(--text);
-      overflow: hidden;
-      text-overflow: ellipsis;
+      word-break: break-all;
+      white-space: normal;
+      overflow-wrap: break-word;
+      line-height: 1.4;
+      padding-right: 8px;
+    }
+
+    .history-item .duration {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 12.5px;
+      color: var(--text-dim);
+      background: #334155;
+      padding: 2px 8px;
+      border-radius: 9999px;
       white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 58px;
+      text-align: right;
     }
 
     .history-item small {
@@ -383,12 +393,12 @@
       font-size: 15px;
       font-weight: 700;
       flex-shrink: 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .history-item:hover .status-indicator {
       transform: scale(1.1);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
     }
     .status-indicator.pass {
       background: var(--success);
@@ -399,16 +409,9 @@
       color: #fff;
     }
     .status-indicator.untested {
-      background: #6c757d;
+      background: #64748b;
       color: #fff;
       font-size: 13px;
-    }
-
-    .info {
-      color: var(--text-dim);
-      font-size: 0.9rem;
-      margin-top: 8px;
-      text-align: center;
     }
   </style>
 </head>
@@ -416,6 +419,10 @@
 
 <header>
   <h1>Local API Client</h1>
+  <!-- Optional: nice to have in footer or about section -->
+<p style="font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-top: 5px;">
+  Powered by <a href="https://echarts.apache.org/" target="_blank" style="color:var(--accent)">Apache ECharts</a>
+</p>
 </header>
 
 <div class="container">
@@ -428,7 +435,7 @@
     <div id="test-results-content">
       <div style="padding:40px 20px; text-align:center; color:var(--text-dim); font-style:italic;">
         Click <strong>Run Tests</strong> to validate currently visible requests.<br>
-        Status indicators + timestamps will update automatically.
+        <strong>500ms delay</strong> between each request to respect throughput / rate limits.
       </div>
     </div>
   </div>
@@ -460,7 +467,7 @@
         <h3>History</h3>
 
         <div class="filter-wrapper">
-          <input type="text" id="history-filter" placeholder="Filter by URL, body or response…">
+          <input type="text" id="history-filter" placeholder="Filter by URL, method, date or status — space separated (e.g. GET pokeapi pass)">
         </div>
 
         <div class="buttons">
@@ -499,15 +506,15 @@ Accept: application/json"></textarea>
       <textarea id="response-body" readonly></textarea>
     </div>
   </div>
-
 </div>
 
 <input type="file" id="import-file" accept=".json" style="display:none;">
 
+<!-- ECharts CDN for the donut chart -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+
 <script>
-// ────────────────────────────────────────────────
-// Final version: timestamp updated on test run + response truncation
-// ────────────────────────────────────────────────
+const TEST_DELAY_MS = 500;
 
 const methodSelect    = document.getElementById('method');
 const urlInput        = document.getElementById('url');
@@ -531,39 +538,30 @@ let history = [];
 let showAll = false;
 let filterText = '';
 let saveToHistory = true;
+let testChart = null;
 
-// ────── Helpers ──────
+// ==================== PRETTY PRINT JSON ====================
 function prettyPrintJson(text) {
-  if (!text) return '';
+  if (!text || typeof text !== 'string') return text || '';
+  
+  const trimmed = text.trim();
+  if (!trimmed) return '';
+
   try {
-    const parsed = JSON.parse(text);
+    const parsed = JSON.parse(trimmed);
     return JSON.stringify(parsed, null, 2);
   } catch (e) {
-    return text;
+    return text; // Not JSON → return raw
   }
 }
 
 function truncateForStorage(text) {
   if (!text) return '';
-  const MAX_CHARS = 15000; // ~15 KB per response → keeps export files small
+  const MAX_CHARS = 1500000;
   if (text.length <= MAX_CHARS) return text;
   return text.substring(0, MAX_CHARS) + '\n\n... [response truncated for storage — re-run test for full result]';
 }
 
-// Load settings
-function loadSettings() {
-  try {
-    const savedSetting = localStorage.getItem('saveToHistory');
-    if (savedSetting !== null) {
-      saveToHistory = savedSetting === 'true';
-      saveHistoryToggle.checked = saveToHistory;
-    }
-  } catch (e) {
-    console.error('Error loading settings:', e);
-  }
-}
-
-// History helpers
 function formatDate(ts) {
   const d = new Date(ts);
   return d.toLocaleString([], { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
@@ -586,16 +584,43 @@ function loadHistory() {
 
 function matchesFilter(item) {
   if (!filterText) return true;
-  const q = filterText.toLowerCase();
-  return (
-    (item.url     || '').toLowerCase().includes(q) ||
-    (item.body    || '').toLowerCase().includes(q) ||
-    (item.response || '').toLowerCase().includes(q)
+  
+  const terms = filterText.toLowerCase().trim().split(/\s+/).filter(t => t.length > 0);
+  if (terms.length === 0) return true;
+
+  const urlLower    = (item.url || '').toLowerCase();
+  const methodLower = (item.method || '').toLowerCase();
+  const statusVal   = (item.testStatus || 'untested').toLowerCase();
+  const dateStr     = formatDate(item.timestamp).toLowerCase();
+
+  const passKeywords = ['pass', 'passed', 'success', 'ok', '✓'];
+  const failKeywords = ['fail', 'failed', 'error', '✕', 'x'];
+
+  let hasPassFilter = false;
+  let hasFailFilter = false;
+  const normalTerms = [];
+
+  terms.forEach(term => {
+    if (passKeywords.includes(term)) hasPassFilter = true;
+    else if (failKeywords.includes(term)) hasFailFilter = true;
+    else normalTerms.push(term);
+  });
+
+  const normalMatch = normalTerms.every(term => 
+    urlLower.includes(term) || methodLower.includes(term) || dateStr.includes(term) || statusVal.includes(term)
   );
+  if (!normalMatch) return false;
+
+  if (hasPassFilter && hasFailFilter) return statusVal === 'pass' || statusVal === 'fail';
+  if (hasPassFilter) return statusVal === 'pass';
+  if (hasFailFilter) return statusVal === 'fail';
+
+  return true;
 }
 
-// Reusable proxy execution
 async function executeRequest(method, targetUrl, headersStr = '', bodyStr = '') {
+  const startTime = performance.now();
+
   const headers = {};
   if (headersStr) {
     headersStr.split('\n').forEach(line => {
@@ -631,7 +656,10 @@ async function executeRequest(method, targetUrl, headersStr = '', bodyStr = '') 
     throw new Error(`Proxy failed: ${proxyResponse.status} - ${errText}`);
   }
 
-  return await proxyResponse.json();
+  const data = await proxyResponse.json();
+  const durationMs = Math.round(performance.now() - startTime);
+
+  return { ...data, durationMs };
 }
 
 function renderHistory() {
@@ -671,7 +699,12 @@ function renderHistory() {
     const u = document.createElement('span');
     u.className = 'url';
     u.title = item.url;
-    u.textContent = item.url.length > 60 ? item.url.substring(0,57)+'…' : item.url;
+    u.textContent = item.url;
+
+    const durationEl = document.createElement('span');
+    durationEl.className = 'duration';
+    const ms = item.durationMs !== undefined ? item.durationMs : '—';
+    durationEl.textContent = `${ms} ms`;
 
     const t = document.createElement('small');
     t.textContent = formatDate(item.timestamp);
@@ -682,7 +715,7 @@ function renderHistory() {
     del.title = 'Remove from history';
     del.addEventListener('click', () => deleteHistoryItem(idx));
 
-    div.append(indicator, m, u, t, del);
+    div.append(indicator, m, u, durationEl, t, del);
     historyList.appendChild(div);
   });
 }
@@ -694,7 +727,10 @@ function loadRequest(idx) {
   urlInput.value     = item.url;
   headersArea.value  = item.headers || '';
   bodyArea.value     = item.body    || '';
-  respBody.value     = prettyPrintJson(item.response || '');
+  
+  // Always pretty-print when loading from history
+  respBody.value = prettyPrintJson(item.response || '');
+  
   statusEl.textContent = item.statusText || '— loaded from history —';
   statusEl.className = item.statusClass || 'status neutral';
 }
@@ -705,7 +741,7 @@ function deleteHistoryItem(idx) {
   renderHistory();
 }
 
-function addToHistory(method, url, headersStr, bodyStr, rawResponse, statusText, statusClass) {
+function addToHistory(method, url, headersStr, bodyStr, rawResponse, statusText, statusClass, durationMs) {
   if (saveToHistory && url) {
     history.unshift({
       timestamp: Date.now(),
@@ -716,14 +752,47 @@ function addToHistory(method, url, headersStr, bodyStr, rawResponse, statusText,
       response: truncateForStorage(rawResponse || ''),
       statusText,
       statusClass,
-      testStatus: 'pass'
+      testStatus: 'pass',
+      durationMs: durationMs
     });
     saveHistory();
     renderHistory();
   }
 }
 
-// Filter & toggle
+// Donut chart function (unchanged)
+function renderDonutChart(passed, failed) {
+  const container = document.getElementById('test-donut-chart');
+  if (!container || typeof echarts === 'undefined') return;
+  if (testChart) testChart.dispose();
+  testChart = echarts.init(container);
+
+  const total = passed + failed;
+  const option = {
+    tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+    legend: { bottom: '5%', left: 'center', orient: 'horizontal', data: ['Passed', 'Failed'], textStyle: { color: '#e2e8f0' } },
+    graphic: [
+      { type: 'text', left: 'center', top: '38%', style: { text: total, textAlign: 'center', fontSize: 48, fontWeight: '600', fill: '#e2e8f0' } },
+      { type: 'text', left: 'center', top: '55%', style: { text: 'TESTS', textAlign: 'center', fontSize: 14, fill: '#94a3b8' } }
+    ],
+    series: [{
+      name: 'Test Results',
+      type: 'pie',
+      radius: ['45%', '70%'],
+      center: ['50%', '45%'],
+      avoidLabelOverlap: false,
+      itemStyle: { borderRadius: 12, borderColor: '#1e2937', borderWidth: 3 },
+      label: { show: false },
+      data: [
+        { value: passed, name: 'Passed', itemStyle: { color: '#22c55e' } },
+        { value: failed, name: 'Failed', itemStyle: { color: '#f87171' } }
+      ]
+    }]
+  };
+  testChart.setOption(option);
+}
+
+// Event Listeners
 filterInput.addEventListener('input', e => {
   filterText = e.target.value.trim();
   renderHistory();
@@ -738,14 +807,9 @@ toggleBtn.addEventListener('click', () => {
 
 saveHistoryToggle.addEventListener('change', (e) => {
   saveToHistory = e.target.checked;
-  try {
-    localStorage.setItem('saveToHistory', saveToHistory);
-  } catch (err) {
-    console.error('Error saving settings:', err);
-  }
+  try { localStorage.setItem('saveToHistory', saveToHistory); } catch {}
 });
 
-// Export / Import / Clear
 exportBtn.addEventListener('click', () => {
   if (history.length === 0) return alert("Nothing to export.");
   const data = JSON.stringify(history, null, 2);
@@ -768,11 +832,7 @@ importInput.addEventListener('change', e => {
     try {
       const imported = JSON.parse(ev.target.result);
       if (!Array.isArray(imported)) throw new Error("Not an array");
-      const valid = imported.filter(i =>
-        i && typeof i.method === 'string' &&
-        typeof i.url === 'string' &&
-        typeof i.timestamp === 'number'
-      );
+      const valid = imported.filter(i => i && typeof i.method === 'string' && typeof i.url === 'string' && typeof i.timestamp === 'number');
       if (valid.length === 0) return alert("No valid requests found.");
       if (confirm(`Add ${valid.length} imported item${valid.length === 1 ? '' : 's'}?`)) {
         history = [...valid, ...history];
@@ -800,14 +860,10 @@ clearHistoryBtn.addEventListener('click', () => {
   }
 });
 
-// Clear body on GET/DELETE
 methodSelect.addEventListener('change', () => {
-  if (['GET','DELETE'].includes(methodSelect.value)) {
-    bodyArea.value = '';
-  }
+  if (['GET','DELETE'].includes(methodSelect.value)) bodyArea.value = '';
 });
 
-// Send request
 sendBtn.addEventListener('click', async () => {
   const method = methodSelect.value;
   const targetUrl = urlInput.value.trim();
@@ -821,10 +877,11 @@ sendBtn.addEventListener('click', async () => {
   statusEl.className = "status neutral";
 
   try {
-    const data = await executeRequest(method, targetUrl, headersStr, bodyStr);
+    const result = await executeRequest(method, targetUrl, headersStr, bodyStr);
+    const { durationMs, ...data } = result;
 
     const rawBody = data.body || '';
-    const displayBody = prettyPrintJson(rawBody);
+    const displayBody = prettyPrintJson(rawBody);   // ← Pretty JSON here
 
     respBody.value = displayBody;
 
@@ -833,36 +890,19 @@ sendBtn.addEventListener('click', async () => {
     statusEl.className = `status ${data.ok ? 'ok' : 'error'}`;
 
     if (data.ok) {
-      addToHistory(
-        method,
-        targetUrl,
-        headersStr,
-        bodyStr,
-        rawBody,                    // store raw (truncated) version
-        statusLine,
-        `status ${data.ok ? 'ok' : 'error'}`
-      );
+      addToHistory(method, targetUrl, headersStr, bodyStr, rawBody, statusLine, `status ${data.ok ? 'ok' : 'error'}`, durationMs);
     }
-
   } catch (err) {
     console.error("Request failed:", err);
     let userMessage = "Request failed";
-
-    if (err.message?.includes("Failed to fetch")) {
-      userMessage = "Cannot reach the backend\n\n→ Is uvicorn running?\n→ Check terminal for errors";
-    } else if (err.name === "AbortError") {
-      userMessage = "Request timed out (30 seconds)";
-    } else if (err.message) {
-      userMessage = err.message.trim();
-    }
-
+    if (err.message?.includes("Failed to fetch")) userMessage = "Cannot reach the backend\n\n→ Is uvicorn running?";
+    else if (err.message) userMessage = err.message.trim();
     statusEl.textContent = userMessage;
     statusEl.className = "status error";
     respBody.value = "";
   }
 });
 
-// Run Tests — only on currently visible (filtered) items
 runTestsBtn.addEventListener('click', async () => {
   if (history.length === 0) {
     alert("No requests in history to test.");
@@ -870,7 +910,6 @@ runTestsBtn.addEventListener('click', async () => {
   }
 
   const visibleItems = history.filter(matchesFilter);
-
   if (visibleItems.length === 0) {
     alert("No matching requests found to test.");
     return;
@@ -878,11 +917,12 @@ runTestsBtn.addEventListener('click', async () => {
 
   const originalBtnText = runTestsBtn.textContent;
   runTestsBtn.disabled = true;
-  runTestsBtn.textContent = 'Running Tests…';
+  runTestsBtn.textContent = `Running Tests… (${TEST_DELAY_MS}ms delay)`;
+  
   testResultsContent.innerHTML = `
     <div style="padding:24px; text-align:center; color:var(--text-dim);">
       <strong>Executing ${visibleItems.length} test(s)...</strong><br>
-      <small style="opacity:0.7;">This may take a moment depending on API response times.</small>
+      <small style="opacity:0.7;">${TEST_DELAY_MS}ms delay between requests</small>
     </div>`;
 
   let passed = 0;
@@ -902,7 +942,8 @@ runTestsBtn.addEventListener('click', async () => {
       </div>`;
 
     try {
-      const data = await executeRequest(item.method, item.url, item.headers, item.body);
+      const result = await executeRequest(item.method, item.url, item.headers, item.body);
+      const { durationMs, ...data } = result;
 
       const rawBody = data.body || '';
       item.response = truncateForStorage(rawBody);
@@ -910,68 +951,59 @@ runTestsBtn.addEventListener('click', async () => {
       item.statusText = statusLine;
       item.statusClass = `status ${data.ok ? 'ok' : 'error'}`;
       item.testStatus = data.ok ? 'pass' : 'fail';
+      item.durationMs = durationMs;
 
       if (data.ok) passed++;
       else failed++;
-
     } catch (err) {
-      console.error("Test failed:", item, err);
       item.testStatus = 'fail';
       item.response = truncateForStorage(err.message || 'Execution error');
       item.statusText = 'Test Error';
       item.statusClass = 'status error';
+      item.durationMs = 0;
       failed++;
     }
 
-    // Update timestamp on every test run
     item.timestamp = Date.now();
-
     saveHistory();
     renderHistory();
+
+    if (i < visibleItems.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, TEST_DELAY_MS));
+    }
   }
 
   const summaryHTML = `
     <div style="padding:24px;">
-      <h4 style="margin:0 0 16px 0; color:var(--text);">✅ Test Run Complete</h4>
-      
-      <div style="display:flex; gap:16px;">
-        <div style="flex:1; background:rgba(0,110,48,0.1); color:var(--success); padding:20px 16px; border-radius:10px; text-align:center;">
+      <h4 style="margin:0 0 12px 0; color:var(--text);">✅ Test Run Complete</h4>
+      <div id="test-donut-chart" style="width: 100%; height: 340px;"></div>
+      <div style="display:flex; gap:16px; margin-top: -10px;">
+        <div style="flex:1; background:rgba(34,197,94,0.15); color:var(--success); padding:20px 16px; border-radius:10px; text-align:center;">
           <div style="font-size:2.4rem; font-weight:700; line-height:1;">${passed}</div>
           <div style="font-weight:600; margin-top:4px;">PASSED</div>
         </div>
-        <div style="flex:1; background:rgba(237,0,140,0.1); color:var(--error); padding:20px 16px; border-radius:10px; text-align:center;">
+        <div style="flex:1; background:rgba(248,113,113,0.15); color:var(--error); padding:20px 16px; border-radius:10px; text-align:center;">
           <div style="font-size:2.4rem; font-weight:700; line-height:1;">${failed}</div>
           <div style="font-weight:600; margin-top:4px;">FAILED</div>
         </div>
       </div>
-
-      <div style="margin-top:20px; padding:12px; background:#f8f9fa; border-radius:8px; font-size:0.9rem; color:var(--text-dim);">
-        <strong>${visibleItems.length} test(s) executed</strong><br>
-        Completed ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
-      </div>
-
-      <button id="reset-test-summary" class="small-btn" style="margin-top:20px; width:100%;">
-        Run Tests Again
-      </button>
+      <button id="reset-test-summary" class="small-btn" style="margin-top:20px; width:100%;">Run Tests Again</button>
     </div>`;
 
   testResultsContent.innerHTML = summaryHTML;
+  renderDonutChart(passed, failed);
 
   runTestsBtn.disabled = false;
   runTestsBtn.textContent = originalBtnText;
 
   const resetBtn = document.getElementById('reset-test-summary');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => runTestsBtn.click());
-  }
+  if (resetBtn) resetBtn.addEventListener('click', () => runTestsBtn.click());
 });
 
 document.addEventListener('keydown', e => {
   if (e.ctrlKey && e.key === 'Enter') sendBtn.click();
 });
 
-// Init
-loadSettings();
 loadHistory();
 </script>
 </body>

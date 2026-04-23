@@ -67,7 +67,7 @@ def is_allowed_url(url: str) -> bool:
 
 # ── Simple in-memory rate limiter (sliding window, per IP) ──────────────────
 # 6 requests per 60 seconds per IP — adjust as needed
-RATE_LIMIT = 6
+RATE_LIMIT = 120
 RATE_WINDOW = 60  # seconds
 
 request_history: Dict[str, list[float]] = defaultdict(list)
