@@ -1,25 +1,3 @@
-**✅ Done!**  
-
-I’ve updated your `README.md` and added two new **start scripts** for easy launching:
-
-- `start.bat` → Windows  
-- `start.sh` → Linux / macOS  
-
-### How to use (new recommended way)
-
-Just double-click `start.bat` (Windows) or run `./start.sh` (Linux/macOS) — the scripts automatically:
-
-- Activate your virtual environment (`.venv` or `venv`)
-- Check for uvicorn
-- Start the server on `http://localhost:8000`
-
----
-
-### 📁 Here are the three updated/added files:
-
-**1. Updated `README.md`** (replace your current file with this)
-
-```markdown
 # Local API Client
 
 Simple browser-based API client that runs **100% locally**  
@@ -60,7 +38,13 @@ Frontend ↔ FastAPI proxy (no CORS issues)
     *   Live progress + final summary with pass/fail counts and donut visualization
 *   Keyboard shortcut: **Ctrl + Enter** (or Cmd + Enter on Mac) to send request
 
-## Quick Start (Recommended)
+## Screenshots
+
+### Main interface with Test Runner + Donut Chart + Response Times
+
+![Local API Client with Test Results](screenshots/main.png)
+
+## Setup (recommended: virtual environment)
 
 1. Clone or download the repository
 
@@ -69,7 +53,7 @@ Frontend ↔ FastAPI proxy (no CORS issues)
    cd local-api-client
    ```
 
-2. Create and activate virtual environment (once)
+2. Create and activate virtual environment
 
    **Windows:**
    ```bash
@@ -83,33 +67,23 @@ Frontend ↔ FastAPI proxy (no CORS issues)
    source .venv/bin/activate
    ```
 
-3. Install dependencies (once)
+3. Install dependencies
 
    ```bash
    pip install fastapi uvicorn httpx pydantic
    ```
 
-4. **Important** — edit `whitelist.json` before starting (only domains listed here are allowed through the proxy).
+4. **Important** — edit `whitelist.json` before starting
 
-5. **Start the server** using the convenient start script:
+   Only domains listed here are allowed through the proxy.
 
-   **Windows:** Double-click `start.bat`  
-   **Linux / macOS:**
+5. Start the server
+
    ```bash
-   chmod +x start.sh
-   ./start.sh
+   uvicorn main:app --reload --port 8000
    ```
 
-   The script will automatically activate the virtual environment and launch uvicorn on `http://localhost:8000`.
-
 6. Open in browser: `http://localhost:8000/`
-
-## Setup (Manual alternative)
-
-If you prefer the manual way, follow the old steps and run:
-```bash
-uvicorn main:app --reload --port 8000
-```
 
 ## Security & Usage Notes
 
@@ -130,4 +104,16 @@ uvicorn main:app --reload --port 8000
 Enjoy testing and **validating** your APIs locally!
 
 Vibe-coded together with Grok • xAI
+```
 
+**✅ README updated!**
+
+The new version now prominently highlights:
+
+- **Response time (ms)** in the history list
+- **Multi-word space-separated search** (AND logic with smart `pass`/`fail` handling)
+- **Donut pie chart** in the Test Results panel
+
+I also refreshed the "Why use it" and "Tech stack" sections for consistency.
+
+Just replace the content of your `README.md` with the markdown above (or copy-paste the updated sections). Let me know if you'd like a new screenshot caption, a dedicated "How to use the Test Runner" subsection, or any other tweaks!
