@@ -49,7 +49,12 @@
       line-height: 1.5;
     }
 
-    .container { max-width: 1200px; margin: 0 auto; }
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      display: flex;  /* Updated to flex for sidebar layout */
+      gap: 16px;  /* Add some space between panels */
+    }
 
     header { margin-bottom: 24px; text-align: center; }
     h1 { font-size: 2.1rem; font-weight: 600; color: var(--accent); }
@@ -107,6 +112,14 @@
       overflow: hidden;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
       transition: box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .test-results {  /* New class for Test Results panel */
+      width: 30%;  /* Set to 30% width as requested */
+    }
+
+    .main-content {  /* New class for the rest of the content */
+      width: 70%;  /* Remaining 70% width */
     }
 
     .section:hover {
@@ -347,88 +360,88 @@
 
 <div class="container">
 
-  <header>
-    <h1>Local API Client</h1>
-  </header>
-
-  <!-- New Test Results Panel -->
-  <div class="section">
+  <div class="section test-results">  <!-- Test Results panel with new class -->
     <div class="section-header">
       <h3>Test Results</h3>
-      <button id="toggle-test-results" class="small-btn">Minimize</button>
+      <button id="run-tests" class="small-btn">Run Tests</button>  <!-- Moved to header -->
     </div>
     <div id="test-results-content">
-      <button id="run-tests">Run Tests</button>
       <!-- Additional content can be added here later -->
     </div>
   </div>
 
-  <div class="controls">
-    <label>
-      Method
-      <select id="method">
-        <option value="GET" selected>GET</option>
-        <option value="POST">POST</option>
-        <option value="PUT">PUT</option>
-        <option value="PATCH">PATCH</option>
-        <option value="DELETE">DELETE</option>
-      </select>
-    </label>
+  <div class="main-content">  <!-- Wrapper for the rest of the content -->
+    <header>
+      <h1>Local API Client</h1>
+    </header>
 
-    <label style="flex:1">
-      URL
-      <input type="text" id="url" placeholder="https://api.example.com/users/42">
-    </label>
+    <div class="controls">
+      <label>
+        Method
+        <select id="method">
+          <option value="GET" selected>GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="PATCH">PATCH</option>
+          <option value="DELETE">DELETE</option>
+        </select>
+      </label>
 
-    <button id="send">Send</button>
-  </div>
+      <label style="flex:1">
+        URL
+        <input type="text" id="url" placeholder="https://api.example.com/users/42">
+      </label>
 
-  <div class="section">
-    <div class="section-header">
-      <h3>History</h3>
-
-      <div class="filter-wrapper">
-        <input type="text" id="history-filter" placeholder="Filter by URL, body or response…">
-      </div>
-
-      <div class="buttons">
-        <label for="saveHistoryToggle" style="display: flex; align-items: center; gap: 8px; color: var(--text-dim);">
-          Save to History
-          <div class="switch">
-            <input type="checkbox" id="saveHistoryToggle" checked>
-            <span class="slider"></span>
-          </div>
-        </label>
-        <button id="toggle-history" class="small-btn">Show all</button>
-        <button id="export-history" class="small-btn">Export</button>
-        <button id="import-history" class="small-btn">Import</button>
-        <button id="clear-history" class="small-btn">Clear all</button>
-      </div>
+      <button id="send">Send</button>
     </div>
 
-    <div id="history-list" class="constrained"></div>
-  </div>
+    <div class="section">
+      <div class="section-header">
+        <h3>History</h3>
 
-  <div class="section">
-    <div class="section-header">Headers (one per line: Key: Value)</div>
-    <textarea id="headers" placeholder="Content-Type: application/json
+        <div class="filter-wrapper">
+          <input type="text" id="history-filter" placeholder="Filter by URL, body or response…">
+        </div>
+
+        <div class="buttons">
+          <label for="saveHistoryToggle" style="display: flex; align-items: center; gap: 8px; color: var(--text-dim);">
+            Save to History
+            <div class="switch">
+              <input type="checkbox" id="saveHistoryToggle" checked>
+              <span class="slider"></span>
+            </div>
+          </label>
+          <button id="toggle-history" class="small-btn">Show all</button>
+          <button id="export-history" class="small-btn">Export</button>
+          <button id="import-history" class="small-btn">Import</button>
+          <button id="clear-history" class="small-btn">Clear all</button>
+        </div>
+      </div>
+
+      <div id="history-list" class="constrained"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Headers (one per line: Key: Value)</div>
+      <textarea id="headers" placeholder="Content-Type: application/json
 Authorization: Bearer eyJhb...
 Accept: application/json"></textarea>
-  </div>
+    </div>
 
-  <div class="section">
-    <div class="section-header">Request Body</div>
-    <textarea id="body" placeholder='{"name": "Alex", "active": true, "tags": ["dev", "api"]}'></textarea>
-  </div>
+    <div class="section">
+      <div class="section-header">Request Body</div>
+      <textarea id="body" placeholder='{"name": "Alex", "active": true, "tags": ["dev", "api"]}'></textarea>
+    </div>
 
-  <div class="section">
-    <div class="section-header">Response</div>
-    <div class="status neutral" id="status">— waiting for request —</div>
-    <textarea id="response-body" readonly></textarea>
-  </div>
+    <div class="section">
+      <div class="section-header">Response</div>
+      <div class="status neutral" id="status">— waiting for request —</div>
+      <textarea id="response-body" readonly></textarea>
+    </div>
 
-  <div class="info">
-    Simple local API client • History saved in browser • Powered by FastAPI proxy
+    <div class="info">
+      Simple local API client • History saved in browser • Powered by FastAPI proxy
+    </div>
   </div>
 
 </div>
