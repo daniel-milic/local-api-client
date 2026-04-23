@@ -106,14 +106,8 @@ Enjoy testing and **validating** your APIs locally!
 Vibe-coded together with Grok • xAI
 ```
 
-**✅ README updated!**
-
 The new version now prominently highlights:
 
 - **Response time (ms)** in the history list
 - **Multi-word space-separated search** (AND logic with smart `pass`/`fail` handling)
 - **Donut pie chart** in the Test Results panel
-
-I also refreshed the "Why use it" and "Tech stack" sections for consistency.
-
-Just replace the content of your `README.md` with the markdown above (or copy-paste the updated sections). Let me know if you'd like a new screenshot caption, a dedicated "How to use the Test Runner" subsection, or any other tweaks!
